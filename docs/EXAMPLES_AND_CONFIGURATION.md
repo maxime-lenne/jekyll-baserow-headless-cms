@@ -170,7 +170,7 @@ baserow:
       sort_by: date
       sort_order: desc
       fields:
-        - { name: Quote, type: text }
+        - { name: Quote, type: text, key: title }
         - { name: Author, type: text }
         - { name: Role, type: text }
         - { name: Company, type: text }
@@ -192,7 +192,7 @@ baserow:
           <span class="star">★</span>
         {% endfor %}
       </div>
-      <p>"{{ testimonial.quote }}"</p>
+      <p>"{{ testimonial.title }}"</p>
       <footer>
         {% if testimonial.avatar.first %}
           <img src="{{ testimonial.avatar.first.url }}" alt="{{ testimonial.author }}" class="avatar" />
@@ -215,19 +215,23 @@ baserow:
 Showcase your technical expertise.
 
 For grouping skills by category, model it in Baserow with two tables: a **Skills** table
-linked to a **Categories** table (via a *Link to table* field), and a **lookup** field on
-Skills that pulls in the category's name (and, optionally, its icon/color/order). This
-mirrors how the `items_by_category` organizer worked with Notion rollups.
+linked to a **Categories** table (via a *Link to table* field), and lookup fields on Skills
+that pull in the category's name, icon and order. This mirrors how the `items_by_category`
+organizer worked with Notion rollups.
 
-**Baserow Table Structure (Skills):**
+**Baserow Table Structure (Skills)** (`items_by_category` reads these exact field names — see
+[`items_by_category`](#organizer-types) for details):
 
 | Field | Type | Description |
 |-------|------|-------------|
 | Name | Single line text | Skill name |
 | Category | Lookup (via link to Categories) | Skill category (Backend, Frontend, etc.) |
+| Icon | Lookup (via link to Categories) | Category icon |
+| Color | Lookup | Skill color |
 | Category Order | Lookup (via link to Categories) | Display order of the category |
 | Level | Number | Proficiency level |
 | Years | Number | Years of experience |
+| Featured | Boolean | Highlight this skill |
 | Order | Number | Display order within category |
 
 **Configuration:**
@@ -241,10 +245,6 @@ baserow:
       organizer: items_by_category
 ```
 
-> `items_by_category` reads the `Name`, `Category`, `Icon`, `Color`, `Category Order`,
-> `Level`, `Years`, `Featured` and `Order` fields directly from the row — make sure your
-> Skills table uses those exact field names (see [Data Organizers](#organizer-types)).
-
 **Template Usage:**
 
 ```liquid
@@ -256,8 +256,11 @@ baserow:
     </h3>
     <div class="skills-grid">
       {% for item in category[1].items %}
-        <div class="skill">
-          <span class="skill-name">{{ item.name }}</span>
+        <div class="skill" style="--skill-color: {{ item.color }}">
+          <span class="skill-name">
+            {{ item.name }}
+            {% if item.featured %}<span class="badge">★</span>{% endif %}
+          </span>
           <div class="skill-bar">
             <div class="skill-level" style="width: {{ item.level }}%"></div>
           </div>
@@ -305,16 +308,44 @@ Groups items by their category. Useful for skills, products, team members, or an
 organizer: items_by_category
 ```
 
+> **Note:** unlike the other organizers, `items_by_category` does **not** use the `fields:`
+> list — it reads a fixed set of field names directly from each row. Your table must use
+> these exact names:
+>
+> | Field | Type | Used for |
+> |-------|------|----------|
+> | `Name` | Text | Item name |
+> | `Category` | Lookup | Category name (groups items together) |
+> | `Icon` | Lookup | Category icon |
+> | `Color` | Lookup | Item color |
+> | `Category Order` | Lookup | Category display order |
+> | `Level` | Number | Item level |
+> | `Years` | Number | Item years |
+> | `Featured` | Boolean | Item featured flag |
+> | `Order` | Number | Item display order within its category |
+>
+> `Category`, `Icon`, `Color` and `Category Order` are typically lookup fields pulling from a
+> *Categories* table via a *Link to table* field, so all items in the same category share the
+> same icon/order.
+
 Output structure:
 ```yaml
 Backend:
   title: Backend
+  category: Backend
+  subcategory: null
   icon: code
   order: 1
   items:
     - name: Ruby
       level: 90
       years: 10
+      description: null
+      icon: null
+      color: blue
+      featured: true
+      order: 1
+      id: 42
 ```
 
 #### `grouped_by`
@@ -369,3 +400,8 @@ fields:
     type: text                # Field type (required)
     key: custom_key           # Output key (optional, defaults to snake_case)
 ```
+
+> **Important:** `simple_list` and `grouped_by` drop any item whose `title` key is empty —
+> they treat `title` as the record's identifier (see [`extract_all`](#organizer-types)). If
+> your primary field isn't named `Name` or `Title` (e.g. `Quote` for a testimonial), give it
+> `key: title` explicitly, or items will silently disappear from the output.

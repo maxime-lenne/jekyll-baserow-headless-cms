@@ -32,6 +32,21 @@ This project is a Baserow-flavored sibling of [jekyll-notion-cms](https://github
 - **Caching**: Intelligent file caching to avoid unnecessary regenerations
 - **Self-hosted friendly**: Works with baserow.io or any self-hosted Baserow instance via `BASEROW_API_URL`
 
+
+## Architecture
+
+<p align="center">
+  <img src="docs/architecture.png" alt="Jekyll Notion CMS Architecture" width="800" />
+</p>
+
+The diagram above shows how Jekyll Baserow Headless CMS integrates with your workflow:
+
+1. **Content editing** in Baserow databases
+2. **Change detection** via Baserow webhook
+3. **Build trigger** through GitHub Actions workflow_dispatch
+4. **Static site generation** with Jekyll + jekyll-baserow-headless-cms
+5. **Deployment** to GitHub Pages (or any static host)
+
 ## Use Cases
 
 ### Landing Page
