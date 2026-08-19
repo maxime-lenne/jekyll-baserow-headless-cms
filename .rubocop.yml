@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-rspec
 
 AllCops:
@@ -82,6 +82,6 @@ RSpec/MessageSpies:
 RSpec/IndexedLet:
   Enabled: false
 
-# Capybara
-Capybara/RSpec/PredicateMatcher:
+# RSpec (Capybara-specific matcher rule, renamed under the RSpec department in rubocop-rspec 3.x)
+RSpec/PredicateMatcher:
   Enabled: false

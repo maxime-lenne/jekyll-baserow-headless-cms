@@ -41,7 +41,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.12'
   spec.add_development_dependency 'rubocop', '~> 1.50'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.20'
+  # rubocop-rspec 2.x pulls in rubocop-rspec_rails 2.29.1, which crashes on load
+  # against current rubocop releases (its `inject_defaults!` call uses an API
+  # rubocop dropped). rubocop-rspec 3.x depends on a fixed rubocop-rspec_rails.
+  spec.add_development_dependency 'rubocop-rspec', '~> 3.0'
   spec.add_development_dependency 'simplecov', '~> 0.22'
   spec.add_development_dependency 'webmock', '~> 3.18'
 end
