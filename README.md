@@ -1,6 +1,7 @@
 # Jekyll Baserow Headless CMS
 
 <p align="center">
+  <img src="https://cdn.simpleicons.org/baserow" alt="Baserow" width="80" height="80" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jekyll/jekyll-original.svg" alt="Jekyll" width="80" height="80" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/githubactions/githubactions-original-wordmark.svg" alt="Github Action" width="80" height="80" />
 </p>
