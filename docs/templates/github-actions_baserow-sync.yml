@@ -5,16 +5,18 @@ on:
     inputs:
       baserow_event:
         description: 'Type of Baserow event'
-        required: true
+        required: false
         type: string
+        default: 'webhook'
       row_id:
         description: 'Baserow row ID'
         required: false
         type: string
       table_id:
         description: 'Baserow table ID'
-        required: true
+        required: false
         type: string
+        default: 'all'
 
 permissions:
   contents: read

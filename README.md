@@ -208,17 +208,23 @@ cp docs/templates/github-actions_baserow-sync.yml .github/workflows/baserow-sync
 
 ### Automatic Sync with Baserow Webhooks
 
-Unlike Notion, Baserow tables support **native webhooks** — no polling automation needed:
+Unlike Notion, Baserow tables support **native webhooks** with custom HTTP headers, so they
+can call the GitHub REST API directly — no relay or serverless function needed:
 
-1. Open your Baserow table → **Webhooks**
-2. Create a webhook for `Rows created`, `Rows updated`, and/or `Rows deleted`
-3. Point it at a small relay (e.g. a GitHub Actions `repository_dispatch` proxy, or a serverless function) that calls:
+1. **Create a GitHub Personal Access Token** (fine-grained, scoped to this repo) with the
+   **Actions: Read and write** permission. This is what lets Baserow trigger the workflow.
+2. In Baserow, open your table → **Webhooks** → **Create webhook**:
+   - **Events**: `Rows created`, `Rows updated`, `Rows deleted` (pick what you need)
+   - **URL**: `https://api.github.com/repos/<owner>/<repo>/actions/workflows/baserow-sync.yml/dispatches`
+   - **Method**: `POST`
+   - **Headers**:
+     - `Authorization: Bearer <your PAT>`
+     - `Accept: application/vnd.github+json`
+   - **Body** (JSON): `{"ref": "main"}`
 
-```bash
-gh workflow run baserow-sync.yml \
-  -f baserow_event=rows.updated \
-  -f table_id=$BASEROW_TABLE_ID
-```
+   The `baserow_event`/`table_id` inputs in the template have defaults, so a minimal
+   `{"ref": "main"}` body is enough — those inputs mainly help distinguish manual/CLI runs.
+3. Repeat per table you want to watch (Baserow webhooks are scoped to one table).
 
 Or trigger the workflow manually via GitHub CLI:
 
