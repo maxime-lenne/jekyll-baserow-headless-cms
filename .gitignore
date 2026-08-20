@@ -29,4 +29,6 @@ Thumbs.db
 .env
 .env.local
 /.tool-versions
-/.claude/
+
+# Claude Code local overrides (personal, not shared)
+/.claude/settings.local.json

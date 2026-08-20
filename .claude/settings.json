@@ -1,0 +1,12 @@
+{
+  "enabledMcpjsonServers": ["github", "context7", "chrome-devtools"],
+  "disabledMcpjsonServers": [
+    "figma-desktop",
+    "sentry",
+    "n8n-mcp-staging",
+    "n8n-mcp-prod",
+    "MCP_DOCKER",
+    "excalidraw-staging",
+    "pencil"
+  ]
+}
